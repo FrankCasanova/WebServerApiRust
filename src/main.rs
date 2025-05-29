@@ -33,7 +33,12 @@ async fn main() -> std::io::Result<()> {
         .expect("Error en las pool");
 
     HttpServer::new(move || {
-        let tera = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/src/templates/**/*")).unwrap();
+        // In Docker, templates are at /app/templates
+        let tera = if std::env::var("TEMPLATES_PATH").is_ok() {
+            Tera::new("/app/templates/**/*").unwrap()
+        } else {
+            Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/src/templates/**/*")).unwrap()
+        };
         App::new()
             .service(hello)
             .service(api::car_to_repair_api::new_car_to_repair)
