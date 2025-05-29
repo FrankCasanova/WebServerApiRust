@@ -25,7 +25,7 @@
                 <ul class="list-group list-group-horizontal">
                     <li class="list-group-item">{{ car.car_to_repair }}</li>
                     <button type="button" class="list-group-item list-group-item-action"
-                        onclick="repairCar({{car.id}})">RepararCoche</button>
+                        onclick="repairCar('{{car.car_to_repair}}')">RepararCoche</button>
                 </ul>
             </li>
         </ul>
@@ -35,14 +35,14 @@
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
     <script>
-        function repairCar(id) {
+        function repairCar(carToRepairUuid) {
             const options = {
                 method: 'Delete',
                 headers: {
                     'Access-Control-Allow-Origin':'*'
                 }
             }
-            let url = "/api/workingcar/carrepaired?id=" + id
+            let url = "/api/workingcar/carrepaired?car_to_repair=" + carToRepairUuid;
             fetch(
                 url,
                 options

@@ -322,5 +322,13 @@ ALTER TABLE ONLY public."WorkingCars"
 ```
 Con esto ya configurado, no deberías tener problemas.
 
+## Tareas
 
+Si quieres, puedes lanzar tu pull request con los siguienets cambios que he pedido en el vídeo:
+
+1. Que se tenga en cuenta la capacidad de los garajes
+2. Que si un coche ya está asignado, no se pueda volver a asignar
+3. Poder elegir a que garaje asignar
+
+Puedes hacer una pull request con tus cambios y revisaré, y si es correcto, lo integraré en el repo 
 

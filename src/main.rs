@@ -48,6 +48,7 @@ async fn main() -> std::io::Result<()> {
             .service(api::working_cars_api::assign_car_to_repair)
             .service(api::working_cars_api::get_all_working_cars_assigned)
             .service(api::working_cars_api::repaired_car)
+            .service(api::working_cars_api::get_available_garages) // este endpoint es nuevo, importante para saber cuantos garages tenemos.
             .service(web_pages::garages_web::get_garages)
             .service(web_pages::garages_web::get_assigned_car_to_garages)
             .service(web_pages::cars_web::create_car)

@@ -18,14 +18,17 @@
     </nav>
     <main class="container">
         <h3>Cars List</h3>
+        <div id="assign-error" class="alert alert-danger d-none"></div>
         {% for car in cars %}
         <ul class="list-group">
             <li class="list-group-item">
                 <ul class="list-group list-group-horizontal">
                     <li class="list-group-item">{{ car.modelo }}</li>
                     <li class="list-group-item">{{ car.fecha_entrada }}</li>
-                    <button type="button" class="list-group-item list-group-item-action"
-                        onclick="assignCarToGarage({{"'" ~ car.id ~ "'"}})">Assing to garage</button>
+                    <li class="list-group-item">
+                        <select class="form-select d-inline w-auto garage-select" data-car-id="{{ car.id }}"></select>
+                        <button type="button" class="btn btn-success ms-2" onclick="assignCarToGarage('{{ car.id }}')">Assign to garage</button>
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -36,30 +39,62 @@
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
     <script>
+        // esto ha sido generado por copilot, un poquito de vibe coding tampoco es malo vamos a ver...
+        // ni de coña escribo yo esta función a pelo.
+        function loadAvailableGarages() {
+            fetch('/api/garages/available')
+                .then(res => res.json())
+                .then(garages => {
+                    document.querySelectorAll('.garage-select').forEach(select => {
+                        select.innerHTML = '';
+                        garages.forEach(g => {
+                            const option = document.createElement('option');
+                            option.value = g.id;
+                            option.textContent = g.name + ' (Capacidad: ' + g.capacity + ')';
+                            select.appendChild(option);
+                        });
+                        // If no garages available, disable the select and button
+                        if (garages.length === 0) {
+                            select.disabled = true;
+                            select.parentElement.querySelector('button').disabled = true;
+                        } else {
+                            select.disabled = false;
+                            select.parentElement.querySelector('button').disabled = false;
+                        }
+                    });
+                });
+        }
+        loadAvailableGarages();
+
+        // Asignar coche a garaje, esta ha sido una mezcla de vibecoding y un poco de artesanía de antaño
+        // no soy experto en javascript pero funciona
         function assignCarToGarage(id) {
-            console.log(id)
+            const select = document.querySelector('.garage-select[data-car-id="' + id + '"]');
+            const garageId = select.value;
             let data = {
-                "assigned_garage":1,
                 "car_to_repair": id,
-            }
-            
+                "garage_id": parseInt(garageId)
+            };
             const options = {
                 method: 'POST',
-                headers:{
-                    "Content-Type":"application/json; charset=utf-8"
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
                 },
                 body: JSON.stringify(data)
-            }
-
-            let url = "/api/workingcar/assingcar"
-            fetch(
-                url,
-                options
-            )
-                .then(response => {
-                    alert("Coche asignado correctamente")
+            };
+            let url = "/api/workingcar/assingcar";
+            fetch(url, options)
+                .then(response => response.text().then(text => ({ ok: response.ok, text })))
+                .then(({ ok, text }) => {
+                    if (ok) {
+                        alert("Coche asignado correctamente");
+                        loadAvailableGarages();
+                    } else {
+                        document.getElementById('assign-error').classList.remove('d-none');
+                        document.getElementById('assign-error').textContent = text;
+                    }
                 })
-                .catch(err => alert("Error: " + err))
+                .catch(err => alert("Error: " + err));
         }
     </script>
 </body>

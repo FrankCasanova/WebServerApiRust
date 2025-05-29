@@ -46,11 +46,19 @@ impl WorkingCarsModel{
             .get_result::<WorkingCarsModel>(conn)
     }
 
+    // Función huerfana, esta no es la que se usa en esta nueva implementación.
     pub fn repaired_car(conn:  &mut PgConnection, working_car_id: &i64) -> Result<usize, diesel::result::Error>{
         let repaired_car = diesel::delete(WorkingCars.filter(id.eq(working_car_id)))
         .execute(conn);
         repaired_car
     }
+
+    // Esta es la nueva función, se parece a la anterior solo que en esta aceptamos el UUID del coche a reparar.
+    pub fn delete_by_car_to_repair(conn: &mut PgConnection, car_uuid: &Uuid) -> Result<usize, diesel::result::Error> {
+    let deleted = diesel::delete(WorkingCars.filter(car_to_repair.eq(car_uuid)))
+        .execute(conn);
+    deleted
+}
 
     pub fn get_working_cars_assigned_to_garage(conn:  &mut PgConnection, garage_id: &i64)->Result<Vec<WorkingCarsModel>, diesel::result::Error>{
         let working_cars = WorkingCars.filter(assigned_garage.eq(garage_id)).load::<WorkingCarsModel>(conn);
